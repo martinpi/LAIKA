@@ -41,6 +41,7 @@ def play():
 #	gpt2.download_gpt2(model_name=model_name)
 	sess = gpt2.start_tf_sess()
 #	gpt2.load_gpt2(sess, run_name='RUN')
+
 	gpt2.load_gpt2(sess, model_name=model_name)
 
 	with open("opening.txt", "r", encoding="utf-8") as file:

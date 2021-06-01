@@ -18,7 +18,8 @@ file_name = "finetuning.txt"
 
 def generate(prompt, session):
 	return gpt2.generate(session,
-		run_name='RUN',
+#		run_name='RUN',
+        model_name=model_name,
 		length=50,
 		temperature=1,
 		prefix=prompt,

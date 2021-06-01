@@ -18,7 +18,7 @@ file_name = "finetuning.txt"
 
 def generate(prompt, session):
 	return gpt2.generate(session,
-		run_name="RUN",
+		run_name='RUN',
 		length=50,
 		temperature=1,
 		prefix=prompt,
@@ -37,26 +37,9 @@ def play():
 	print("\nInitializing\n...This might take a few minutes\n")
 	print("\n")
     
-	gpt2.download_gpt2(model_name=model_name)
-    
-	session = gpt2.start_tf_sess()
-
-	with open(file_name, "r", encoding="utf-8") as file:
-		gpt2.finetune(session,
-			dataset=file_name,
-			model_name=model_name,
-			batch_size=2,
-			steps=200,
-			restore_from='fresh',
-			learning_rate=0.0001,
-			run_name='RUN',
-			max_checkpoints=8,
-			print_every=100,
-			sample_every=25,
-			save_every=200)
-
-	print("Fine-tuning complete.\n")
-	print("\n")
+#	gpt2.download_gpt2(model_name=model_name)
+	sess = gpt2.start_tf_sess()
+	gpt2.load_gpt2(sess, run_name='RUN')
 
 	with open("opening.txt", "r", encoding="utf-8") as file:
 		starter = file.read()
@@ -68,7 +51,7 @@ def play():
 #		if action == "restart":
 #			break
 
-		elif action == "quit":
+		if action == "quit":
 			exit()
 
 #		elif action == "help":

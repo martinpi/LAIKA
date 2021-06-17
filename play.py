@@ -6,6 +6,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 model_name = "124M"
 file_name = "finetuning.txt"
+run_name = "run1"
 
 #def splash():
 #    print("0) New Game\n1) Load Game\n")
@@ -18,8 +19,8 @@ file_name = "finetuning.txt"
 
 def generate(prompt, session):
 	return gpt2.generate(session,
-#		run_name='RUN',
-        model_name=model_name,
+		run_name=run_name,
+        # model_name=model_name,
 		length=50,
 		temperature=1,
 		prefix=prompt,
@@ -27,7 +28,7 @@ def generate(prompt, session):
 		batch_size=1,
 		top_k=40,
 		top_p=0.95,
-		return_as_list=True)
+		return_as_list=True)[0]
 
 def play():
 
@@ -40,9 +41,11 @@ def play():
     
 #	gpt2.download_gpt2(model_name=model_name)
 	sess = gpt2.start_tf_sess()
-#	gpt2.load_gpt2(sess, run_name='RUN')
+	gpt2.load_gpt2(sess, run_name=run_name)
 
-	gpt2.load_gpt2(sess, model_name=model_name)
+	print("Model loaded\n")
+
+	# gpt2.load_gpt2(sess, model_name=model_name)
 
 	with open("opening.txt", "r", encoding="utf-8") as file:
 		starter = file.read()
@@ -116,9 +119,9 @@ def play():
 
 #				action = "\n> " + action + "\n"
 
-			result = "\n" + generate(action, session)
+			result = "\n" + generate(action, sess)
 
-			console_print(result)
+			print(result)
 
 
 if __name__ == "__main__":

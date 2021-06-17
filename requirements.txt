@@ -4,4 +4,6 @@ numpy
 profanityfilter
 pyyaml
 regex
-tensorflow==1.15
+tensorflow==1.15.5
+gpt-2-simple
+flask

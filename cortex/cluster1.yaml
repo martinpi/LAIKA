@@ -1,0 +1,105 @@
+# cluster.yaml
+
+# EKS cluster name for cortex (default: cortex)
+cluster_name: cortex1
+
+# AWS region
+region: eu-north-1
+
+# instance type
+#instance_type: c5.xlarge
+#g4dn.xlarge
+
+# minimum number of instances (must be >= 0)
+#min_instances: 1
+
+# maximum number of instances (must be >= 1)
+#max_instances: 2
+
+# whether to use spot instances in the cluster; spot instances are not guaranteed to be available so please take that into account for production clusters (default: false)
+#spot: false
+
+#spot_config:
+  # additional instances with identical or better specs than the primary instance type (defaults to only the primary instance)
+  #p2.xlarge possible but 12g gpu mem
+  #instance_distribution: [m4.2xlarge, t2.xlarge, t2.2xlarge]
+  #[g4dn.2xlarge, p2.xlarge, p3.2xlarge]
+
+  # minimum number of on demand instances (default: 0)
+  #on_demand_base_capacity: 1
+
+  # percentage of on demand instances to use after the on demand base capacity has been met [0, 100] (default: 50)
+  # note: setting this to 0 may hinder cluster scale up when spot instances are not available
+  #on_demand_percentage_above_base_capacity: 50
+
+  # max price for spot instances (default: the on-demand price of the primary instance type)
+  #max_price: # <float>
+
+  # number of spot instance pools across which to allocate spot instances [1, 20] (default: number of instances in instance distribution)
+  #instance_pools: 3
+
+  # fallback to on-demand instances if spot instances were unable to be allocated (default: true)
+  #on_demand_backup: true
+
+
+# list of cluster node groups; the smaller index, the higher the priority of the node group
+node_groups:
+  - name: ng-cpu # name of the node group
+    instance_type: m5.large # instance type
+    min_instances: 1 # minimum number of instances
+    max_instances: 2 # maximum number of instances
+    instance_volume_size: 50 # disk storage size per instance (GB)
+    instance_volume_type: gp3 # instance volume type [gp2 | gp3 | io1 | st1 | sc1]
+    # instance_volume_iops: 3000 # instance volume iops (only applicable to io1/gp3)
+    # instance_volume_throughput: 125 # instance volume throughput (only applicable to gp3)
+    spot: false # whether to use spot instances
+
+  # - name: ng-gpu
+  #   instance_type: g4dn.xlarge
+  #   min_instances: 1
+  #   max_instances: 3
+  #   instance_volume_size: 50
+  #   instance_volume_type: gp3
+  #   spot: false
+  # ...
+
+# subnet visibility for instances [public (instances will have public IPs) | private (instances will not have public IPs)]
+subnet_visibility: public
+
+# NAT gateway (required when using private subnets) [none | single | highly_available (a NAT gateway per availability zone)]
+nat_gateway: none
+
+# API load balancer scheme [internet-facing | internal]
+api_load_balancer_scheme: internet-facing
+
+# operator load balancer scheme [internet-facing | internal]
+# note: if using "internal", you must configure VPC Peering to connect your CLI to your cluster operator
+operator_load_balancer_scheme: internet-facing
+
+# to install Cortex in an existing VPC, you can provide a list of subnets for your cluster to use
+# subnet_visibility (specified above in this file) must match your subnets' visibility
+# this is an advanced feature (not recommended for first-time users) and requires your VPC to be configured correctly; see https://eksctl.io/usage/vpc-networking/#use-existing-vpc-other-custom-configuration
+# here is an example:
+# subnets:
+#   - availability_zone: us-west-2a
+#     subnet_id: subnet-060f3961c876872ae
+#   - availability_zone: us-west-2b
+#     subnet_id: subnet-0faed05adf6042ab7
+
+# restrict access to APIs by cidr blocks/ip address ranges
+api_load_balancer_cidr_white_list: [0.0.0.0/0]
+
+# restrict access to the Operator by cidr blocks/ip address ranges
+operator_load_balancer_cidr_white_list: [0.0.0.0/0]
+
+# additional tags to assign to AWS resources (all resources will automatically be tagged with cortex.dev/cluster-name: <cluster_name>)
+tags:  # <string>: <string> map of key/value pairs
+
+# SSL certificate ARN (only necessary when using a custom domain)
+ssl_certificate_arn:
+
+# List of IAM policies to attach to your Cortex APIs
+iam_policy_arns: ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
+
+# primary CIDR block for the cluster's VPC
+vpc_cidr: 192.168.0.0/16
